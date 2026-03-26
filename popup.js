@@ -28,6 +28,40 @@ const editIdInput = document.getElementById('edit-id');
 
 // Drag and Drop State
 let draggedItemIndex = null;
+let scrollInterval = null;
+let scrollDirection = 0; // -1 for up, 1 for down, 0 for none
+
+function handleAutoScroll(e) {
+    const container = picksList;
+    const rect = container.getBoundingClientRect();
+    const threshold = 60; // pixels from top/bottom to start scrolling
+    const scrollSpeed = 8;
+
+    let newDirection = 0;
+    if (e.clientY < rect.top + threshold) {
+        newDirection = -1;
+    } else if (e.clientY > rect.bottom - threshold) {
+        newDirection = 1;
+    }
+
+    if (newDirection !== scrollDirection) {
+        stopAutoScroll();
+        scrollDirection = newDirection;
+        if (scrollDirection !== 0) {
+            scrollInterval = setInterval(() => {
+                container.scrollTop += scrollDirection * scrollSpeed;
+            }, 16);
+        }
+    }
+}
+
+function stopAutoScroll() {
+    if (scrollInterval) {
+        clearInterval(scrollInterval);
+        scrollInterval = null;
+    }
+    scrollDirection = 0;
+}
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -153,12 +187,14 @@ function renderPicks(query = '') {
         card.addEventListener('dragend', () => {
             card.classList.remove('dragging');
             draggedItemIndex = null;
+            stopAutoScroll();
             const allCards = picksList.querySelectorAll('.pick-card');
             allCards.forEach(c => c.classList.remove('drag-over'));
         });
 
         card.addEventListener('dragover', (e) => {
             e.preventDefault();
+            handleAutoScroll(e);
             card.classList.add('drag-over');
         });
 
@@ -168,6 +204,7 @@ function renderPicks(query = '') {
 
         card.addEventListener('drop', (e) => {
             e.preventDefault();
+            stopAutoScroll();
             if (draggedItemIndex !== null && draggedItemIndex !== index) {
                 const itemToMove = picks.splice(draggedItemIndex, 1)[0];
                 picks.splice(index, 0, itemToMove);
@@ -290,6 +327,15 @@ function showToast(msg) {
 
 // Event Listeners
 function setupEventListeners() {
+    picksList.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        handleAutoScroll(e);
+    });
+
+    picksList.addEventListener('dragleave', () => {
+        stopAutoScroll();
+    });
+
     searchInput.addEventListener('input', (e) => renderPicks(e.target.value));
 
     addBtn.addEventListener('click', () => {
