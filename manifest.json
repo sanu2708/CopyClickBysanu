@@ -4,17 +4,14 @@
   "version": "1.0",
   "description": "Your clipboard, reinvented! Store and retrieve your favorite text snippets and images in one click.",
   "action": {
-    "default_popup": "index.html",
-    "default_icon": "icon.svg"
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon.svg"
   },
   "permissions": [
     "clipboardWrite",
     "storage"
   ],
   "icons": {
-    "128": "icon.svg"
-  },
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
+    "128": "icons/icon.svg"
   }
 }

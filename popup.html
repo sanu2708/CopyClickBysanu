@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copyclick by Sanu Singh</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo-area">
+                <div class="logo-icon">📋</div>
+                <div class="logo-text">
+                    <h1>Copyclick</h1>
+                    <span class="author">by Sanu Singh</span>
+                </div>
+            </div>
+            <button id="add-btn" class="btn-primary-round">+</button>
+        </header>
+
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Search your picks...">
+        </div>
+
+        <div id="picks-list" class="picks-list">
+            <!-- Picks will be rendered here -->
+        </div>
+
+        <footer>
+            <p>Click a pick to copy it instantly.</p>
+        </footer>
+    </div>
+
+    <!-- Add Pick Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>New Pick</h2>
+                <button id="close-modal" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Title (Optional)</label>
+                    <input type="text" id="new-title" placeholder="e.g. My Bio, Work Link...">
+                </div>
+                <div class="input-group">
+                    <label>Content</label>
+                    <textarea id="new-content" rows="4" placeholder="Paste your text or link here..."></textarea>
+                    <div id="image-preview-container" class="hidden">
+                        <img id="image-preview" src="" alt="Preview">
+                        <button id="remove-image" class="btn-remove-img">&times;</button>
+                    </div>
+                </div>
+                <div class="type-selector">
+                    <button id="type-text" class="type-btn active">Text</button>
+                    <button id="type-image" class="type-btn">Image</button>
+                    <input type="file" id="file-input" accept="image/*" class="hidden">
+                </div>
+                <div class="quick-add">
+                    <label>Quick Add</label>
+                    <div class="char-grid">
+                        <span>©</span><span>®</span><span>™</span><span>•</span>
+                        <span>→</span><span>←</span><span>↑</span><span>↓</span>
+                        <span>★</span><span>♥</span><span>✓</span><span>✗</span>
+                    </div>
+                </div>
+                <button id="save-pick" class="btn-save">Save Pick</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
