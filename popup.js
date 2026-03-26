@@ -19,6 +19,9 @@ const imagePreviewContainer = document.getElementById('image-preview-container')
 const imagePreview = document.getElementById('image-preview');
 const removeImageBtn = document.getElementById('remove-image');
 const charGrid = document.querySelector('.char-grid');
+const exportBtn = document.getElementById('export-btn');
+const importBtn = document.getElementById('import-btn');
+const importFile = document.getElementById('import-file');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,6 +38,59 @@ function loadPicks() {
 
 function savePicks() {
     chrome.storage.local.set({ picks });
+}
+
+function exportPicks() {
+    if (picks.length === 0) {
+        showToast('No data to export');
+        return;
+    }
+    const dataStr = JSON.stringify(picks, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `copyclick_backup_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Exported successfully');
+}
+
+function importPicks(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const importedPicks = JSON.parse(event.target.result);
+            if (!Array.isArray(importedPicks)) {
+                throw new Error('Invalid format');
+            }
+            // Basic validation
+            const isValid = importedPicks.every(p => p.id && p.type && p.content);
+            if (!isValid) {
+                throw new Error('Invalid data structure');
+            }
+
+            if (confirm(`Import ${importedPicks.length} picks? This will merge with your existing data.`)) {
+                // Merge and avoid duplicates by ID
+                const existingIds = new Set(picks.map(p => p.id));
+                const newPicks = importedPicks.filter(p => !existingIds.has(p.id));
+                picks = [...newPicks, ...picks];
+                savePicks();
+                renderPicks();
+                showToast(`Imported ${newPicks.length} new picks`);
+            }
+        } catch (err) {
+            console.error('Import failed', err);
+            showToast('Invalid JSON file');
+        }
+        importFile.value = ''; // Reset file input
+    };
+    reader.readAsText(file);
 }
 
 function renderPicks(query = '') {
@@ -181,6 +237,10 @@ function setupEventListeners() {
             newContentInput.value += e.target.innerText;
         }
     });
+
+    exportBtn.addEventListener('click', exportPicks);
+    importBtn.addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', importPicks);
 
     savePickBtn.addEventListener('click', () => {
         const title = newTitleInput.value.trim();
