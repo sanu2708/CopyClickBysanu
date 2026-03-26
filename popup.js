@@ -23,6 +23,12 @@ const exportBtn = document.getElementById('export-btn');
 const importBtn = document.getElementById('import-btn');
 const importFile = document.getElementById('import-file');
 
+const modalTitle = document.getElementById('modal-title');
+const editIdInput = document.getElementById('edit-id');
+
+// Drag and Drop State
+let draggedItemIndex = null;
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadPicks();
@@ -116,6 +122,8 @@ function renderPicks(query = '') {
     filtered.forEach((pick, index) => {
         const card = document.createElement('div');
         card.className = 'pick-card';
+        card.draggable = true;
+        card.dataset.index = index;
         card.style.animationDelay = `${index * 0.05}s`;
         
         let icon = '📄';
@@ -123,16 +131,53 @@ function renderPicks(query = '') {
         if (pick.type === 'link') icon = '🔗';
 
         card.innerHTML = `
+            <div class="drag-handle">⋮⋮</div>
             <div class="pick-icon type-${pick.type}">${icon}</div>
             <div class="pick-info">
                 <h3>${escapeHtml(pick.title)}</h3>
                 <p>${pick.type === 'image' ? 'Image Content' : escapeHtml(pick.content.substring(0, 50))}${pick.content.length > 50 ? '...' : ''}</p>
             </div>
-            <button class="btn-delete" data-id="${pick.id}">🗑️</button>
+            <div class="action-buttons">
+                <button class="btn-action btn-edit" data-id="${pick.id}" title="Edit">✏️</button>
+                <button class="btn-action btn-delete" data-id="${pick.id}" title="Delete">🗑️</button>
+            </div>
         `;
 
+        // Drag and Drop Events
+        card.addEventListener('dragstart', (e) => {
+            draggedItemIndex = index;
+            card.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
+            draggedItemIndex = null;
+            const allCards = picksList.querySelectorAll('.pick-card');
+            allCards.forEach(c => c.classList.remove('drag-over'));
+        });
+
+        card.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            card.classList.add('drag-over');
+        });
+
+        card.addEventListener('dragleave', () => {
+            card.classList.remove('drag-over');
+        });
+
+        card.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (draggedItemIndex !== null && draggedItemIndex !== index) {
+                const itemToMove = picks.splice(draggedItemIndex, 1)[0];
+                picks.splice(index, 0, itemToMove);
+                savePicks();
+                renderPicks(searchInput.value);
+            }
+        });
+
         card.addEventListener('click', (e) => {
-            if (e.target.classList.contains('btn-delete')) return;
+            if (e.target.closest('.btn-action') || e.target.closest('.drag-handle')) return;
             copyToClipboard(pick);
             
             // Visual feedback
@@ -150,6 +195,12 @@ function renderPicks(query = '') {
             }, 1000);
         });
 
+        const editBtn = card.querySelector('.btn-edit');
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEditModal(pick);
+        });
+
         const delBtn = card.querySelector('.btn-delete');
         delBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -160,6 +211,31 @@ function renderPicks(query = '') {
 
         picksList.appendChild(card);
     });
+}
+
+function openEditModal(pick) {
+    modalTitle.innerText = 'Edit Pick';
+    editIdInput.value = pick.id;
+    newTitleInput.value = pick.title;
+    
+    if (pick.type === 'image') {
+        imageBase64 = pick.content;
+        currentType = 'image';
+        typeImageBtn.classList.add('active');
+        typeTextBtn.classList.remove('active');
+        newContentInput.classList.add('hidden');
+        imagePreviewContainer.classList.remove('hidden');
+        imagePreview.src = imageBase64;
+    } else {
+        newContentInput.value = pick.content;
+        currentType = 'text';
+        typeTextBtn.classList.add('active');
+        typeImageBtn.classList.remove('active');
+        newContentInput.classList.remove('hidden');
+        imagePreviewContainer.classList.add('hidden');
+    }
+    
+    modalOverlay.classList.remove('hidden');
 }
 
 function escapeHtml(text) {
@@ -216,7 +292,11 @@ function showToast(msg) {
 function setupEventListeners() {
     searchInput.addEventListener('input', (e) => renderPicks(e.target.value));
 
-    addBtn.addEventListener('click', () => modalOverlay.classList.remove('hidden'));
+    addBtn.addEventListener('click', () => {
+        modalTitle.innerText = 'New Pick';
+        editIdInput.value = '';
+        modalOverlay.classList.remove('hidden');
+    });
     closeModal.addEventListener('click', () => {
         modalOverlay.classList.add('hidden');
         resetForm();
@@ -274,23 +354,38 @@ function setupEventListeners() {
     savePickBtn.addEventListener('click', () => {
         const title = newTitleInput.value.trim();
         const content = currentType === 'image' ? imageBase64 : newContentInput.value.trim();
+        const editId = editIdInput.value;
 
         if (!content) return;
 
         let type = currentType;
         if (type === 'text' && content.startsWith('http')) type = 'link';
 
-        const newPick = {
-            id: Date.now().toString(),
-            type,
-            title: title || (type === 'text' ? content.substring(0, 20) : 'Untitled'),
-            content,
-            createdAt: Date.now()
-        };
+        if (editId) {
+            // Update existing
+            const index = picks.findIndex(p => p.id === editId);
+            if (index !== -1) {
+                picks[index] = {
+                    ...picks[index],
+                    type,
+                    title: title || (type === 'text' ? content.substring(0, 20) : 'Untitled'),
+                    content
+                };
+            }
+        } else {
+            // Create new
+            const newPick = {
+                id: Date.now().toString(),
+                type,
+                title: title || (type === 'text' ? content.substring(0, 20) : 'Untitled'),
+                content,
+                createdAt: Date.now()
+            };
+            picks.unshift(newPick);
+        }
 
-        picks.unshift(newPick);
         savePicks();
-        renderPicks();
+        renderPicks(searchInput.value);
         modalOverlay.classList.add('hidden');
         resetForm();
     });

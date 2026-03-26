@@ -42,10 +42,11 @@
     <div id="modal-overlay" class="modal-overlay hidden">
         <div class="modal">
             <div class="modal-header">
-                <h2>New Pick</h2>
+                <h2 id="modal-title">New Pick</h2>
                 <button id="close-modal" class="btn-close">&times;</button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="edit-id">
                 <div class="input-group">
                     <label>Title (Optional)</label>
                     <input type="text" id="new-title" placeholder="e.g. My Bio, Work Link...">
