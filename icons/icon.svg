@@ -1,8 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <rect width="128" height="128" rx="24" fill="#f97316"/>
-  <path d="M40 30h48a8 8 0 0 1 8 8v60a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V38a8 8 0 0 1 8-8z" fill="white" opacity="0.2"/>
-  <path d="M48 24h32a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H48a4 4 0 0 1-4-4v-8a4 4 0 0 1 4-4z" fill="white"/>
-  <rect x="44" y="50" width="40" height="4" rx="2" fill="white"/>
-  <rect x="44" y="62" width="40" height="4" rx="2" fill="white"/>
-  <rect x="44" y="74" width="28" height="4" rx="2" fill="white"/>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="32" fill="url(#grad)" />
+  <path d="M44 36C44 33.7909 45.7909 32 48 32H80C82.2091 32 84 33.7909 84 36V40H44V36Z" fill="white" />
+  <path d="M40 44C40 41.7909 41.7909 40 44 40H84C86.2091 40 88 41.7909 88 44V92C88 94.2091 86.2091 96 84 96H44C41.7909 96 40 94.2091 40 92V44Z" fill="white" fill-opacity="0.9" />
+  <rect x="52" y="56" width="24" height="4" rx="2" fill="#f97316" fill-opacity="0.5" />
+  <rect x="52" y="68" width="24" height="4" rx="2" fill="#f97316" fill-opacity="0.5" />
+  <rect x="52" y="80" width="16" height="4" rx="2" fill="#f97316" fill-opacity="0.5" />
 </svg>

@@ -94,25 +94,29 @@ function importPicks(e) {
 }
 
 function renderPicks(query = '') {
-    picksList.innerHTML = '';
-    
+    const searchTerm = query.toLowerCase();
     const filtered = picks.filter(p => 
-        p.title.toLowerCase().includes(query.toLowerCase()) || 
-        p.content.toLowerCase().includes(query.toLowerCase())
+        p.title.toLowerCase().includes(searchTerm) || 
+        p.content.toLowerCase().includes(searchTerm)
     );
 
+    picksList.innerHTML = '';
+    
     if (filtered.length === 0) {
         picksList.innerHTML = `
-            <div style="text-align: center; padding: 40px 20px; color: #999;">
-                <p>No picks found.</p>
+            <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); animation: fadeIn 0.5s ease-out;">
+                <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.5;">📂</div>
+                <p style="font-weight: 600;">No picks found</p>
+                <p style="font-size: 12px; margin-top: 4px;">Try a different search or add a new pick!</p>
             </div>
         `;
         return;
     }
 
-    filtered.forEach(pick => {
+    filtered.forEach((pick, index) => {
         const card = document.createElement('div');
         card.className = 'pick-card';
+        card.style.animationDelay = `${index * 0.05}s`;
         
         let icon = '📄';
         if (pick.type === 'image') icon = '🖼️';
@@ -121,22 +125,47 @@ function renderPicks(query = '') {
         card.innerHTML = `
             <div class="pick-icon type-${pick.type}">${icon}</div>
             <div class="pick-info">
-                <h3>${pick.title}</h3>
-                <p>${pick.type === 'image' ? 'Image Content' : pick.content}</p>
+                <h3>${escapeHtml(pick.title)}</h3>
+                <p>${pick.type === 'image' ? 'Image Content' : escapeHtml(pick.content.substring(0, 50))}${pick.content.length > 50 ? '...' : ''}</p>
             </div>
             <button class="btn-delete" data-id="${pick.id}">🗑️</button>
         `;
 
-        card.addEventListener('click', () => copyToClipboard(pick));
-        
+        card.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-delete')) return;
+            copyToClipboard(pick);
+            
+            // Visual feedback
+            const originalBg = card.style.background;
+            card.style.background = '#f0fdf4';
+            card.style.borderColor = '#22c55e';
+            const h3 = card.querySelector('h3');
+            const originalText = h3.innerText;
+            h3.innerText = 'Copied! ✅';
+            
+            setTimeout(() => {
+                card.style.background = originalBg;
+                card.style.borderColor = '';
+                h3.innerText = originalText;
+            }, 1000);
+        });
+
         const delBtn = card.querySelector('.btn-delete');
         delBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            deletePick(pick.id);
+            card.style.transform = 'scale(0.9) translateX(20px)';
+            card.style.opacity = '0';
+            setTimeout(() => deletePick(pick.id), 300);
         });
 
         picksList.appendChild(card);
     });
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 async function copyToClipboard(pick) {
@@ -150,7 +179,7 @@ async function copyToClipboard(pick) {
         } else {
             await navigator.clipboard.writeText(pick.content);
         }
-        showToast('Copied!');
+        // Inline feedback is now provided in renderPicks
     } catch (err) {
         console.error('Copy failed', err);
         showToast('Failed to copy');
