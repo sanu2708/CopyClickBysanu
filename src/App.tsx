@@ -133,25 +133,26 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen w-[400px] mx-auto p-4 bg-[#f5f5f5]">
+    <div className="w-[400px] h-[550px] overflow-y-auto bg-[#f5f5f5] custom-scrollbar">
       <Toaster position="top-center" richColors />
       
-      {/* Header */}
-      <header className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-            <Clipboard className="w-8 h-8 text-orange-500" />
-            Copyclick by Sanu Singh
-          </h1>
-          <p className="text-gray-500 text-sm mt-1 italic">Your clipboard, reinvented.</p>
-        </div>
-        <button 
-          onClick={() => setIsAdding(true)}
-          className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-full shadow-lg transition-transform active:scale-95"
-        >
-          <Plus className="w-6 h-6" />
-        </button>
-      </header>
+      <div className="p-4">
+        {/* Header */}
+        <header className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+              <Clipboard className="w-6 h-6 text-orange-500" />
+              Copyclick
+            </h1>
+            <p className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">by Sanu Singh</p>
+          </div>
+          <button 
+            onClick={() => setIsAdding(true)}
+            className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full shadow-lg transition-transform active:scale-95"
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+        </header>
 
       {/* Search Bar */}
       <div className="relative mb-6">
@@ -355,6 +356,7 @@ export default function App() {
         <p>Click a pick to copy it instantly.</p>
         <p className="mt-1">Picks are saved locally in your browser.</p>
       </footer>
+      </div>
     </div>
   );
 }
