@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Copyclick by Sanu Singh",
+  "version": "1.0",
+  "description": "Your clipboard, reinvented! Store and retrieve your favorite text snippets and images in one click.",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "icon.svg"
+  },
+  "permissions": [
+    "clipboardWrite",
+    "storage"
+  ],
+  "icons": {
+    "128": "icon.svg"
+  }
+}

@@ -133,7 +133,7 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen max-w-2xl mx-auto p-4 md:p-8">
+    <div className="min-h-screen w-[400px] mx-auto p-4 bg-[#f5f5f5]">
       <Toaster position="top-center" richColors />
       
       {/* Header */}
