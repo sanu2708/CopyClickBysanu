@@ -64,6 +64,16 @@ function stopAutoScroll() {
     scrollDirection = 0;
 }
 
+function base64ToBlob(base64, mime) {
+    const byteString = atob(base64.split(',')[1]);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mime });
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadClicks();
@@ -195,7 +205,23 @@ function renderClicks(query = '') {
         card.addEventListener('dragstart', (e) => {
             draggedItemIndex = index;
             card.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
+            
+            if (click.type === 'image') {
+                try {
+                    const mime = click.content.split(';')[0].split(':')[1];
+                    const blob = base64ToBlob(click.content, mime);
+                    const file = new File([blob], click.title || "image.png", { type: mime });
+                    e.dataTransfer.items.add(file);
+                    // Fallback for some apps
+                    e.dataTransfer.setData('text/html', `<img src="${click.content}" alt="${click.title}">`);
+                } catch (err) {
+                    console.error('Failed to add image to drag data', err);
+                }
+            } else {
+                e.dataTransfer.setData('text/plain', click.content);
+            }
+            
+            e.dataTransfer.effectAllowed = 'copyMove';
         });
 
         card.addEventListener('dragend', () => {

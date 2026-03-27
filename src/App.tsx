@@ -194,6 +194,31 @@ export default function App() {
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, click: Click) => {
+    if (click.type === 'image') {
+      try {
+        const parts = click.content.split(';');
+        const mime = parts[0].split(':')[1];
+        const byteString = atob(click.content.split(',')[1]);
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mime });
+        const file = new File([blob], click.title || "image.png", { type: mime });
+        e.dataTransfer.items.add(file);
+        // Fallback for some apps
+        e.dataTransfer.setData('text/html', `<img src="${click.content}" alt="${click.title}">`);
+      } catch (err) {
+        console.error('Drag start error:', err);
+      }
+    } else {
+      e.dataTransfer.setData('text/plain', click.content);
+    }
+    e.dataTransfer.effectAllowed = 'copyMove';
+  };
+
   const filteredClicks = clicks.filter(click => {
     const matchesSearch = 
       click.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -390,6 +415,8 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
+              draggable={true}
+              onDragStart={(e) => handleDragStart(e, click)}
               onClick={() => handleCopyClick(click)}
               className="click-card group bg-[#1e1e1e] rounded-2xl p-2 border border-white/10 cursor-pointer flex items-center gap-3"
             >
