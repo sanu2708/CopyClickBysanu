@@ -182,7 +182,7 @@ header {
     color: var(--primary);
 }
 
-.picks-list {
+.clicks-list {
     flex: 1;
     overflow-y: auto;
     display: flex;
@@ -192,16 +192,16 @@ header {
     margin: 0 -4px;
 }
 
-.picks-list::-webkit-scrollbar {
+.clicks-list::-webkit-scrollbar {
     width: 5px;
 }
 
-.picks-list::-webkit-scrollbar-thumb {
+.clicks-list::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
 
-.pick-card {
+.click-card {
     background: var(--surface);
     backdrop-filter: blur(10px);
     padding: 16px;
@@ -221,18 +221,18 @@ header {
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.pick-card:hover {
+.click-card:hover {
     transform: translateY(-4px) scale(1.02);
     border-color: var(--primary-light);
     background: white;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-.pick-card:active {
+.click-card:active {
     transform: scale(0.98);
 }
 
-.pick-icon {
+.click-icon {
     width: 48px;
     height: 48px;
     border-radius: 14px;
@@ -243,7 +243,7 @@ header {
     transition: transform 0.3s;
 }
 
-.pick-card:hover .pick-icon {
+.click-card:hover .click-icon {
     transform: rotate(10deg);
 }
 
@@ -251,19 +251,19 @@ header {
 .type-image { background: #faf5ff; color: #a855f7; }
 .type-link { background: #f0fdf4; color: #22c55e; }
 
-.pick-info {
+.click-info {
     flex: 1;
     min-width: 0;
 }
 
-.pick-info h3 {
+.click-info h3 {
     font-size: 16px;
     font-weight: 700;
     color: var(--text-main);
     margin-bottom: 2px;
 }
 
-.pick-info p {
+.click-info p {
     font-size: 13px;
     color: var(--text-muted);
 }
@@ -279,7 +279,7 @@ header {
     transition: all 0.2s;
 }
 
-.pick-card:hover .btn-delete {
+.click-card:hover .btn-delete {
     opacity: 1;
 }
 
@@ -289,7 +289,7 @@ header {
     transform: scale(1.1);
 }
 
-.pick-card.dragging {
+.click-card.dragging {
     opacity: 0.5;
     transform: scale(0.95);
     border: 2px dashed var(--primary);
@@ -310,7 +310,7 @@ header {
     cursor: grabbing;
 }
 
-.pick-card:hover .drag-handle {
+.click-card:hover .drag-handle {
     color: var(--primary-light);
 }
 
@@ -321,7 +321,7 @@ header {
     transition: opacity 0.2s;
 }
 
-.pick-card:hover .action-buttons {
+.click-card:hover .action-buttons {
     opacity: 1;
 }
 

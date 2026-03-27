@@ -1,15 +1,15 @@
 // State
-let picks = [];
+let clicks = [];
 let currentType = 'text';
 let imageBase64 = '';
 
 // DOM Elements
-const picksList = document.getElementById('picks-list');
+const clicksList = document.getElementById('clicks-list');
 const searchInput = document.getElementById('search-input');
 const addBtn = document.getElementById('add-btn');
 const modalOverlay = document.getElementById('modal-overlay');
 const closeModal = document.getElementById('close-modal');
-const savePickBtn = document.getElementById('save-pick');
+const saveClickBtn = document.getElementById('save-click');
 const typeTextBtn = document.getElementById('type-text');
 const typeImageBtn = document.getElementById('type-image');
 const fileInput = document.getElementById('file-input');
@@ -32,7 +32,7 @@ let scrollInterval = null;
 let scrollDirection = 0; // -1 for up, 1 for down, 0 for none
 
 function handleAutoScroll(e) {
-    const container = picksList;
+    const container = clicksList;
     const rect = container.getBoundingClientRect();
     const threshold = 60; // pixels from top/bottom to start scrolling
     const scrollSpeed = 8;
@@ -65,27 +65,27 @@ function stopAutoScroll() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    loadPicks();
+    loadClicks();
     setupEventListeners();
 });
 
-function loadPicks() {
-    chrome.storage.local.get(['picks'], (result) => {
-        picks = result.picks || [];
-        renderPicks();
+function loadClicks() {
+    chrome.storage.local.get(['clicks'], (result) => {
+        clicks = result.clicks || [];
+        renderClicks();
     });
 }
 
-function savePicks() {
-    chrome.storage.local.set({ picks });
+function saveClicks() {
+    chrome.storage.local.set({ clicks });
 }
 
-function exportPicks() {
-    if (picks.length === 0) {
+function exportClicks() {
+    if (clicks.length === 0) {
         showToast('No data to export');
         return;
     }
-    const dataStr = JSON.stringify(picks, null, 2);
+    const dataStr = JSON.stringify(clicks, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -98,31 +98,31 @@ function exportPicks() {
     showToast('Exported successfully');
 }
 
-function importPicks(e) {
+function importClicks(e) {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (event) => {
         try {
-            const importedPicks = JSON.parse(event.target.result);
-            if (!Array.isArray(importedPicks)) {
+            const importedClicks = JSON.parse(event.target.result);
+            if (!Array.isArray(importedClicks)) {
                 throw new Error('Invalid format');
             }
             // Basic validation
-            const isValid = importedPicks.every(p => p.id && p.type && p.content);
+            const isValid = importedClicks.every(p => p.id && p.type && p.content);
             if (!isValid) {
                 throw new Error('Invalid data structure');
             }
 
-            if (confirm(`Import ${importedPicks.length} picks? This will merge with your existing data.`)) {
+            if (confirm(`Import ${importedClicks.length} clicks? This will merge with your existing data.`)) {
                 // Merge and avoid duplicates by ID
-                const existingIds = new Set(picks.map(p => p.id));
-                const newPicks = importedPicks.filter(p => !existingIds.has(p.id));
-                picks = [...newPicks, ...picks];
-                savePicks();
-                renderPicks();
-                showToast(`Imported ${newPicks.length} new picks`);
+                const existingIds = new Set(clicks.map(p => p.id));
+                const newClicks = importedClicks.filter(p => !existingIds.has(p.id));
+                clicks = [...newClicks, ...clicks];
+                saveClicks();
+                renderClicks();
+                showToast(`Imported ${newClicks.length} new clicks`);
             }
         } catch (err) {
             console.error('Import failed', err);
@@ -133,17 +133,17 @@ function importPicks(e) {
     reader.readAsText(file);
 }
 
-function renderPicks(query = '') {
+function renderClicks(query = '') {
     const searchTerm = query.toLowerCase();
-    const filtered = picks.filter(p => 
+    const filtered = clicks.filter(p => 
         p.title.toLowerCase().includes(searchTerm) || 
         p.content.toLowerCase().includes(searchTerm)
     );
 
-    picksList.innerHTML = '';
+    clicksList.innerHTML = '';
     
     if (filtered.length === 0) {
-        picksList.innerHTML = `
+        clicksList.innerHTML = `
             <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); animation: fadeIn 0.5s ease-out;">
                 <div style="margin-bottom: 16px; opacity: 0.6; display: flex; justify-content: center;">
                     <svg width="64" height="64" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -158,34 +158,34 @@ function renderPicks(query = '') {
                         <circle cx="85" cy="64" r="6" fill="white" />
                     </svg>
                 </div>
-                <p style="font-weight: 600;">No picks found</p>
-                <p style="font-size: 12px; margin-top: 4px;">Try a different search or add a new pick!</p>
+                <p style="font-weight: 600;">No clicks found</p>
+                <p style="font-size: 12px; margin-top: 4px;">Try a different search or add a new click!</p>
             </div>
         `;
         return;
     }
 
-    filtered.forEach((pick, index) => {
+    filtered.forEach((click, index) => {
         const card = document.createElement('div');
-        card.className = 'pick-card';
+        card.className = 'click-card';
         card.draggable = true;
         card.dataset.index = index;
         card.style.animationDelay = `${index * 0.05}s`;
         
         let icon = '📄';
-        if (pick.type === 'image') icon = '🖼️';
-        if (pick.type === 'link') icon = '🔗';
+        if (click.type === 'image') icon = '🖼️';
+        if (click.type === 'link') icon = '🔗';
 
         card.innerHTML = `
             <div class="drag-handle">⋮⋮</div>
-            <div class="pick-icon type-${pick.type}">${icon}</div>
-            <div class="pick-info">
-                <h3>${escapeHtml(pick.title)}</h3>
-                <p>${pick.type === 'image' ? 'Image Content' : escapeHtml(pick.content.substring(0, 50))}${pick.content.length > 50 ? '...' : ''}</p>
+            <div class="click-icon type-${click.type}">${icon}</div>
+            <div class="click-info">
+                <h3>${escapeHtml(click.title)}</h3>
+                <p>${click.type === 'image' ? 'Image Content' : escapeHtml(click.content.substring(0, 50))}${click.content.length > 50 ? '...' : ''}</p>
             </div>
             <div class="action-buttons">
-                <button class="btn-action btn-edit" data-id="${pick.id}" title="Edit">✏️</button>
-                <button class="btn-action btn-delete" data-id="${pick.id}" title="Delete">🗑️</button>
+                <button class="btn-action btn-edit" data-id="${click.id}" title="Edit">✏️</button>
+                <button class="btn-action btn-delete" data-id="${click.id}" title="Delete">🗑️</button>
             </div>
         `;
 
@@ -200,7 +200,7 @@ function renderPicks(query = '') {
             card.classList.remove('dragging');
             draggedItemIndex = null;
             stopAutoScroll();
-            const allCards = picksList.querySelectorAll('.pick-card');
+            const allCards = clicksList.querySelectorAll('.click-card');
             allCards.forEach(c => c.classList.remove('drag-over'));
         });
 
@@ -218,16 +218,16 @@ function renderPicks(query = '') {
             e.preventDefault();
             stopAutoScroll();
             if (draggedItemIndex !== null && draggedItemIndex !== index) {
-                const itemToMove = picks.splice(draggedItemIndex, 1)[0];
-                picks.splice(index, 0, itemToMove);
-                savePicks();
-                renderPicks(searchInput.value);
+                const itemToMove = clicks.splice(draggedItemIndex, 1)[0];
+                clicks.splice(index, 0, itemToMove);
+                saveClicks();
+                renderClicks(searchInput.value);
             }
         });
 
         card.addEventListener('click', (e) => {
             if (e.target.closest('.btn-action') || e.target.closest('.drag-handle')) return;
-            copyToClipboard(pick);
+            copyToClipboard(click);
             
             // Visual feedback
             const originalBg = card.style.background;
@@ -247,7 +247,7 @@ function renderPicks(query = '') {
         const editBtn = card.querySelector('.btn-edit');
         editBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            openEditModal(pick);
+            openEditModal(click);
         });
 
         const delBtn = card.querySelector('.btn-delete');
@@ -255,20 +255,20 @@ function renderPicks(query = '') {
             e.stopPropagation();
             card.style.transform = 'scale(0.9) translateX(20px)';
             card.style.opacity = '0';
-            setTimeout(() => deletePick(pick.id), 300);
+            setTimeout(() => deleteClick(click.id), 300);
         });
 
-        picksList.appendChild(card);
+        clicksList.appendChild(card);
     });
 }
 
-function openEditModal(pick) {
-    modalTitle.innerText = 'Edit Pick';
-    editIdInput.value = pick.id;
-    newTitleInput.value = pick.title;
+function openEditModal(click) {
+    modalTitle.innerText = 'Edit Click';
+    editIdInput.value = click.id;
+    newTitleInput.value = click.title;
     
-    if (pick.type === 'image') {
-        imageBase64 = pick.content;
+    if (click.type === 'image') {
+        imageBase64 = click.content;
         currentType = 'image';
         typeImageBtn.classList.add('active');
         typeTextBtn.classList.remove('active');
@@ -276,7 +276,7 @@ function openEditModal(pick) {
         imagePreviewContainer.classList.remove('hidden');
         imagePreview.src = imageBase64;
     } else {
-        newContentInput.value = pick.content;
+        newContentInput.value = click.content;
         currentType = 'text';
         typeTextBtn.classList.add('active');
         typeImageBtn.classList.remove('active');
@@ -293,28 +293,28 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-async function copyToClipboard(pick) {
+async function copyToClipboard(click) {
     try {
-        if (pick.type === 'image') {
-            const response = await fetch(pick.content);
+        if (click.type === 'image') {
+            const response = await fetch(click.content);
             const blob = await response.blob();
             await navigator.clipboard.write([
                 new ClipboardItem({ [blob.type]: blob })
             ]);
         } else {
-            await navigator.clipboard.writeText(pick.content);
+            await navigator.clipboard.writeText(click.content);
         }
-        // Inline feedback is now provided in renderPicks
+        // Inline feedback is now provided in renderClicks
     } catch (err) {
         console.error('Copy failed', err);
         showToast('Failed to copy');
     }
 }
 
-function deletePick(id) {
-    picks = picks.filter(p => p.id !== id);
-    savePicks();
-    renderPicks(searchInput.value);
+function deleteClick(id) {
+    clicks = clicks.filter(p => p.id !== id);
+    saveClicks();
+    renderClicks(searchInput.value);
 }
 
 function showToast(msg) {
@@ -339,19 +339,19 @@ function showToast(msg) {
 
 // Event Listeners
 function setupEventListeners() {
-    picksList.addEventListener('dragover', (e) => {
+    clicksList.addEventListener('dragover', (e) => {
         e.preventDefault();
         handleAutoScroll(e);
     });
 
-    picksList.addEventListener('dragleave', () => {
+    clicksList.addEventListener('dragleave', () => {
         stopAutoScroll();
     });
 
-    searchInput.addEventListener('input', (e) => renderPicks(e.target.value));
+    searchInput.addEventListener('input', (e) => renderClicks(e.target.value));
 
     addBtn.addEventListener('click', () => {
-        modalTitle.innerText = 'New Pick';
+        modalTitle.innerText = 'New Click';
         editIdInput.value = '';
         modalOverlay.classList.remove('hidden');
     });
@@ -405,11 +405,11 @@ function setupEventListeners() {
         }
     });
 
-    exportBtn.addEventListener('click', exportPicks);
+    exportBtn.addEventListener('click', exportClicks);
     importBtn.addEventListener('click', () => importFile.click());
-    importFile.addEventListener('change', importPicks);
+    importFile.addEventListener('change', importClicks);
 
-    savePickBtn.addEventListener('click', () => {
+    saveClickBtn.addEventListener('click', () => {
         const title = newTitleInput.value.trim();
         const content = currentType === 'image' ? imageBase64 : newContentInput.value.trim();
         const editId = editIdInput.value;
@@ -421,10 +421,10 @@ function setupEventListeners() {
 
         if (editId) {
             // Update existing
-            const index = picks.findIndex(p => p.id === editId);
+            const index = clicks.findIndex(p => p.id === editId);
             if (index !== -1) {
-                picks[index] = {
-                    ...picks[index],
+                clicks[index] = {
+                    ...clicks[index],
                     type,
                     title: title || (type === 'text' ? content.substring(0, 20) : 'Untitled'),
                     content
@@ -432,18 +432,18 @@ function setupEventListeners() {
             }
         } else {
             // Create new
-            const newPick = {
+            const newClick = {
                 id: Date.now().toString(),
                 type,
                 title: title || (type === 'text' ? content.substring(0, 20) : 'Untitled'),
                 content,
                 createdAt: Date.now()
             };
-            picks.unshift(newPick);
+            clicks.unshift(newClick);
         }
 
-        savePicks();
-        renderPicks(searchInput.value);
+        saveClicks();
+        renderClicks(searchInput.value);
         modalOverlay.classList.add('hidden');
         resetForm();
     });

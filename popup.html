@@ -34,11 +34,11 @@
 
         <div class="search-container">
             <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" placeholder="Search your picks...">
+            <input type="text" id="search-input" placeholder="Search your clicks...">
         </div>
 
-        <div id="picks-list" class="picks-list">
-            <!-- Picks will be rendered here -->
+        <div id="clicks-list" class="clicks-list">
+            <!-- Clicks will be rendered here -->
         </div>
 
         <footer>
@@ -47,16 +47,16 @@
                 <button id="import-btn" title="Import Data">📥 Import</button>
                 <input type="file" id="import-file" accept=".json" class="hidden">
             </div>
-            <p>Click a pick to copy it instantly.</p>
+            <p>Click a click to copy it instantly.</p>
             <p class="credit">Made with <span class="heart">❤️</span> By Sanu Singh</p>
         </footer>
     </div>
 
-    <!-- Add Pick Modal -->
+    <!-- Add Click Modal -->
     <div id="modal-overlay" class="modal-overlay hidden">
         <div class="modal">
             <div class="modal-header">
-                <h2 id="modal-title">New Pick</h2>
+                <h2 id="modal-title">New Click</h2>
                 <button id="close-modal" class="btn-close">&times;</button>
             </div>
             <div class="modal-body">
@@ -86,7 +86,7 @@
                         <span>★</span><span>♥</span><span>✓</span><span>✗</span>
                     </div>
                 </div>
-                <button id="save-pick" class="btn-save">Save Pick</button>
+                <button id="save-click" class="btn-save">Save Click</button>
             </div>
         </div>
     </div>
