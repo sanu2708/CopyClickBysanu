@@ -432,14 +432,13 @@ function setupEventListeners() {
     pinBtn.addEventListener('click', async () => {
         if (typeof chrome !== 'undefined' && chrome.sidePanel) {
             try {
-                const window = await chrome.windows.getCurrent();
-                await chrome.sidePanel.open({ windowId: window.id });
-                // Optional: close the popup after opening side panel
+                const currentWindow = await chrome.windows.getCurrent();
+                await chrome.sidePanel.open({ windowId: currentWindow.id });
+                // Close the popup after opening side panel
                 window.close();
             } catch (err) {
                 console.error('Failed to open side panel:', err);
-                // Fallback: alert user if side panel fails
-                showToast('Side panel not supported or failed to open', 'error');
+                showToast('Failed to open side panel', 'error');
             }
         } else {
             showToast('Side panel is only available in Chrome extension', 'error');
