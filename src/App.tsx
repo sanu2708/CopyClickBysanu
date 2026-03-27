@@ -45,7 +45,9 @@ export default function App() {
   const [newClickTitle, setNewClickTitle] = useState('');
   const [newClickType, setNewClickType] = useState<ClickType>('text');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'all' | ClickType>('all');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   // Load clicks from localStorage
   useEffect(() => {
@@ -127,10 +129,60 @@ export default function App() {
     }
   };
 
-  const filteredClicks = clicks.filter(click => 
-    click.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    click.content.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleExport = () => {
+    if (clicks.length === 0) {
+      toast.error('No clicks to export');
+      return;
+    }
+    const dataStr = JSON.stringify(clicks, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `copyclick_backup_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success('Exported successfully!');
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const importedClicks = JSON.parse(event.target.result as string);
+        if (!Array.isArray(importedClicks)) throw new Error('Invalid format');
+        
+        const existingIds = new Set(clicks.map(c => c.id));
+        const newClicks = importedClicks.filter((c: any) => c.id && !existingIds.has(c.id));
+        
+        if (newClicks.length === 0) {
+          toast.info('No new clicks found in file');
+        } else {
+          setClicks(prev => [...newClicks, ...prev]);
+          toast.success(`Imported ${newClicks.length} new clicks!`);
+        }
+      } catch (err) {
+        toast.error('Failed to import: Invalid JSON file');
+      }
+      if (importInputRef.current) importInputRef.current.value = '';
+    };
+    reader.readAsText(file);
+  };
+
+  const filteredClicks = clicks.filter(click => {
+    const matchesSearch = 
+      click.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      click.content.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesTab = activeTab === 'all' || click.type === activeTab;
+    
+    return matchesSearch && matchesTab;
+  });
 
   return (
     <div className="w-[400px] h-[550px] overflow-y-auto bg-[#121212] custom-scrollbar">
@@ -164,6 +216,30 @@ export default function App() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#1e1e1e] border border-white/10 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
         />
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 mb-6 px-1 overflow-x-auto no-scrollbar">
+        {[
+          { id: 'all', label: 'All', icon: Clipboard },
+          { id: 'text', label: 'Texts', icon: Type },
+          { id: 'image', label: 'Images', icon: ImageIcon },
+          { id: 'link', label: 'Links', icon: LinkIcon },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap",
+              activeTab === tab.id 
+                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" 
+                : "bg-[#1e1e1e] text-gray-500 hover:text-gray-300 border border-white/5"
+            )}
+          >
+            <tab.icon className="w-3.5 h-3.5" />
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* Add Click Modal/Overlay */}
@@ -350,6 +426,29 @@ export default function App() {
 
       {/* Footer Info */}
       <footer className="mt-12 text-center text-xs text-gray-400 pb-8">
+        <div className="flex justify-center gap-4 mb-6">
+          <button 
+            onClick={handleExport}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e1e1e] border border-white/10 hover:bg-[#252525] transition-colors text-gray-300"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            Export
+          </button>
+          <button 
+            onClick={() => importInputRef.current?.click()}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e1e1e] border border-white/10 hover:bg-[#252525] transition-colors text-gray-300"
+          >
+            <Plus className="w-3.5 h-3.5 rotate-45" />
+            Import
+          </button>
+          <input 
+            type="file" 
+            ref={importInputRef} 
+            onChange={handleImport} 
+            accept=".json" 
+            className="hidden" 
+          />
+        </div>
         <p>Click a click to copy it instantly.</p>
         <p className="mt-1">Clicks are saved locally in your browser.</p>
       </footer>

@@ -1,6 +1,7 @@
 // State
 let clicks = [];
 let currentType = 'text';
+let activeTab = 'all';
 let imageBase64 = '';
 
 // DOM Elements
@@ -135,10 +136,12 @@ function importClicks(e) {
 
 function renderClicks(query = '') {
     const searchTerm = query.toLowerCase();
-    const filtered = clicks.filter(p => 
-        p.title.toLowerCase().includes(searchTerm) || 
-        p.content.toLowerCase().includes(searchTerm)
-    );
+    const filtered = clicks.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(searchTerm) || 
+                             p.content.toLowerCase().includes(searchTerm);
+        const matchesTab = activeTab === 'all' || p.type === activeTab;
+        return matchesSearch && matchesTab;
+    });
 
     clicksList.innerHTML = '';
     
@@ -348,6 +351,17 @@ function setupEventListeners() {
     });
 
     searchInput.addEventListener('input', (e) => renderClicks(e.target.value));
+
+    // Tab Filtering
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeTab = btn.dataset.tab;
+            renderClicks(searchInput.value);
+        });
+    });
 
     addBtn.addEventListener('click', () => {
         modalTitle.innerText = 'New Click';
