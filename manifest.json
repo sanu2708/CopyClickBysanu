@@ -9,8 +9,12 @@
   },
   "permissions": [
     "clipboardWrite",
-    "storage"
+    "storage",
+    "sidePanel"
   ],
+  "side_panel": {
+    "default_path": "popup.html"
+  },
   "icons": {
     "16": "public/icons/icon16.png",
     "48": "public/icons/icon48.png",

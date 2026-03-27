@@ -15,7 +15,8 @@ import {
   Check,
   X,
   Clipboard,
-  ExternalLink
+  ExternalLink,
+  Pin
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Toaster, toast } from 'sonner';
@@ -255,12 +256,21 @@ export default function App() {
             </h1>
             <p className="text-gray-500 text-[9px] uppercase tracking-widest font-bold">by Sanu Singh</p>
           </div>
-          <button 
-            onClick={() => setIsAdding(true)}
-            className="bg-orange-500 hover:bg-orange-600 text-white p-1.5 rounded-xl shadow-lg transition-transform active:scale-95"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => toast.error('Side panel is only available in the Chrome extension')}
+              className="bg-[#1e1e1e] border border-white/10 text-gray-400 hover:text-white p-2 rounded-xl transition-all active:scale-95"
+              title="Pin to Side Panel"
+            >
+              <Pin className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => setIsAdding(true)}
+              className="bg-orange-500 hover:bg-orange-600 text-white p-1.5 rounded-xl shadow-lg transition-transform active:scale-95"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+          </div>
         </header>
 
       {/* Search Bar */}

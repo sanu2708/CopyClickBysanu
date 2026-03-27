@@ -426,6 +426,26 @@ function setupEventListeners() {
         });
     });
 
+    const pinBtn = document.getElementById('pin-btn');
+
+    // Pin to Side Panel
+    pinBtn.addEventListener('click', async () => {
+        if (typeof chrome !== 'undefined' && chrome.sidePanel) {
+            try {
+                const window = await chrome.windows.getCurrent();
+                await chrome.sidePanel.open({ windowId: window.id });
+                // Optional: close the popup after opening side panel
+                window.close();
+            } catch (err) {
+                console.error('Failed to open side panel:', err);
+                // Fallback: alert user if side panel fails
+                showToast('Side panel not supported or failed to open', 'error');
+            }
+        } else {
+            showToast('Side panel is only available in Chrome extension', 'error');
+        }
+    });
+
     addBtn.addEventListener('click', () => {
         modalTitle.innerText = 'New Click';
         editIdInput.value = '';
