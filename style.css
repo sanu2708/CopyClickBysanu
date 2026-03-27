@@ -86,8 +86,10 @@ header {
 }
 
 .logo-icon {
-    font-size: 28px;
-    filter: drop-shadow(0 4px 6px rgba(249, 115, 22, 0.3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 4px 10px rgba(255, 107, 107, 0.4));
 }
 
 .logo-text h1 {
