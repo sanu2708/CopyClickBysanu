@@ -188,38 +188,38 @@ export default function App() {
     <div className="w-[400px] h-[550px] overflow-y-auto bg-[#121212] custom-scrollbar">
       <Toaster position="top-center" richColors />
       
-      <div className="p-4">
+      <div className="p-4 pt-3">
         {/* Header */}
-        <header className="flex items-center justify-between mb-6">
+        <header className="flex items-center justify-between mb-3">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-              <img src="/icons/icon48.png" alt="Copyclick Logo" className="w-8 h-8" />
+            <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              <img src="/icons/icon48.png" alt="Copyclick Logo" className="w-7 h-7" />
               Copyclick
             </h1>
-            <p className="text-gray-500 text-[10px] uppercase tracking-widest font-bold">by Sanu Singh</p>
+            <p className="text-gray-500 text-[9px] uppercase tracking-widest font-bold">by Sanu Singh</p>
           </div>
           <button 
             onClick={() => setIsAdding(true)}
-            className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full shadow-lg transition-transform active:scale-95"
+            className="bg-orange-500 hover:bg-orange-600 text-white p-1.5 rounded-xl shadow-lg transition-transform active:scale-95"
           >
             <Plus className="w-5 h-5" />
           </button>
         </header>
 
       {/* Search Bar */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+      <div className="relative mb-3">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
         <input 
           type="text"
           placeholder="Search your clicks..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#1e1e1e] border border-white/10 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
+          className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#1e1e1e] border border-white/10 text-white text-sm placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
         />
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 px-1 overflow-x-auto no-scrollbar">
+      <div className="flex gap-1 mb-3 px-1 overflow-x-auto no-scrollbar">
         {[
           { id: 'all', label: 'All', icon: Clipboard },
           { id: 'text', label: 'Texts', icon: Type },
@@ -425,20 +425,20 @@ export default function App() {
       </div>
 
       {/* Footer Info */}
-      <footer className="mt-12 text-center text-xs text-gray-400 pb-8">
-        <div className="flex justify-center gap-4 mb-6">
+      <footer className="mt-8 text-center text-[10px] text-gray-500 pb-6">
+        <div className="flex justify-center gap-3 mb-4">
           <button 
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e1e1e] border border-white/10 hover:bg-[#252525] transition-colors text-gray-300"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1e1e1e] border border-white/10 hover:bg-[#252525] transition-colors text-gray-400"
           >
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3 h-3" />
             Export
           </button>
           <button 
             onClick={() => importInputRef.current?.click()}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e1e1e] border border-white/10 hover:bg-[#252525] transition-colors text-gray-300"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1e1e1e] border border-white/10 hover:bg-[#252525] transition-colors text-gray-400"
           >
-            <Plus className="w-3.5 h-3.5 rotate-45" />
+            <Plus className="w-3 h-3 rotate-45" />
             Import
           </button>
           <input 
