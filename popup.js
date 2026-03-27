@@ -145,7 +145,19 @@ function renderPicks(query = '') {
     if (filtered.length === 0) {
         picksList.innerHTML = `
             <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); animation: fadeIn 0.5s ease-out;">
-                <div style="font-size: 48px; margin-bottom: 12px; opacity: 0.5;">📂</div>
+                <div style="margin-bottom: 16px; opacity: 0.6; display: flex; justify-content: center;">
+                    <svg width="64" height="64" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="empty-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FF6B6B" />
+                                <stop offset="100%" stop-color="#FFD93D" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="128" height="128" rx="36" fill="url(#empty-bg)" />
+                        <path d="M85 45C80 38 70 34 60 34C40 34 28 48 28 64C28 80 40 94 60 94C70 94 80 90 85 83" stroke="white" stroke-width="12" stroke-linecap="round" />
+                        <circle cx="85" cy="64" r="6" fill="white" />
+                    </svg>
+                </div>
                 <p style="font-weight: 600;">No picks found</p>
                 <p style="font-size: 12px; margin-top: 4px;">Try a different search or add a new pick!</p>
             </div>
