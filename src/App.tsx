@@ -174,6 +174,26 @@ export default function App() {
     reader.readAsText(file);
   };
 
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setNewClickContent(reader.result as string);
+            setNewClickType('image');
+            if (!newClickTitle) setNewClickTitle(`Pasted Image ${new Date().toLocaleTimeString()}`);
+          };
+          reader.readAsDataURL(file);
+        }
+        e.preventDefault();
+        break;
+      }
+    }
+  };
+
   const filteredClicks = clicks.filter(click => {
     const matchesSearch = 
       click.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -294,6 +314,7 @@ export default function App() {
                     <textarea 
                       placeholder="Paste your text or link here..."
                       value={newClickContent}
+                      onPaste={handlePaste}
                       onChange={(e) => {
                         setNewClickContent(e.target.value);
                         if (e.target.value.startsWith('http')) setNewClickType('link');

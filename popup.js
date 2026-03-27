@@ -352,6 +352,31 @@ function setupEventListeners() {
 
     searchInput.addEventListener('input', (e) => renderClicks(e.target.value));
 
+    newContentInput.addEventListener('paste', (e) => {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                const file = items[i].getAsFile();
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        imageBase64 = event.target.result;
+                        currentType = 'image';
+                        typeImageBtn.classList.add('active');
+                        typeTextBtn.classList.remove('active');
+                        newContentInput.classList.add('hidden');
+                        imagePreviewContainer.classList.remove('hidden');
+                        imagePreview.src = imageBase64;
+                        if (!newTitleInput.value) newTitleInput.value = `Pasted Image ${new Date().toLocaleTimeString()}`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+                e.preventDefault();
+                break;
+            }
+        }
+    });
+
     // Tab Filtering
     const tabBtns = document.querySelectorAll('.tab-btn');
     tabBtns.forEach(btn => {
