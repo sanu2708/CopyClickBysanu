@@ -5,15 +5,15 @@
   "description": "The ultimate productivity companion for instant text and image retrieval by Sanu Singh",
   "action": {
     "default_popup": "index.html",
-    "default_icon": "icon.svg"
+    "default_icon": "icons/icon48.png"
   },
   "permissions": [
     "clipboardWrite",
     "storage"
   ],
   "icons": {
-    "16": "icon.svg",
-    "48": "icon.svg",
-    "128": "icon.svg"
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
 }
