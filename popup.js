@@ -181,7 +181,6 @@ function renderClicks(query = '') {
             <div class="click-icon type-${click.type}">${icon}</div>
             <div class="click-info">
                 <h3>${escapeHtml(click.title)}</h3>
-                <p>${click.type === 'image' ? 'Image Content' : escapeHtml(click.content.substring(0, 50))}${click.content.length > 50 ? '...' : ''}</p>
             </div>
             <div class="action-buttons">
                 <button class="btn-action btn-edit" data-id="${click.id}" title="Edit">✏️</button>

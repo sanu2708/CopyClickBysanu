@@ -133,18 +133,18 @@ export default function App() {
   );
 
   return (
-    <div className="w-[400px] h-[550px] overflow-y-auto bg-[#f5f5f5] custom-scrollbar">
+    <div className="w-[400px] h-[550px] overflow-y-auto bg-[#121212] custom-scrollbar">
       <Toaster position="top-center" richColors />
       
       <div className="p-4">
         {/* Header */}
         <header className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
               <Clipboard className="w-6 h-6 text-orange-500" />
               Copyclick
             </h1>
-            <p className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">by Sanu Singh</p>
+            <p className="text-gray-500 text-[10px] uppercase tracking-widest font-bold">by Sanu Singh</p>
           </div>
           <button 
             onClick={() => setIsAdding(true)}
@@ -156,13 +156,13 @@ export default function App() {
 
       {/* Search Bar */}
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
         <input 
           type="text"
           placeholder="Search your clicks..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
+          className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#1e1e1e] border border-white/10 text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
         />
       </div>
 
@@ -180,12 +180,12 @@ export default function App() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl"
+              className="bg-[#1e1e1e] border border-white/10 rounded-3xl w-full max-w-md p-6 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold">New Click</h2>
-                <button onClick={() => setIsAdding(false)} className="text-gray-400 hover:text-gray-600">
+                <h2 className="text-xl font-bold text-white">New Click</h2>
+                <button onClick={() => setIsAdding(false)} className="text-gray-500 hover:text-gray-300">
                   <X className="w-6 h-6" />
                 </button>
               </div>
@@ -198,7 +198,7 @@ export default function App() {
                     placeholder="e.g. My Bio, Work Link..."
                     value={newClickTitle}
                     onChange={(e) => setNewClickTitle(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:border-orange-500 transition-all"
+                    className="w-full px-4 py-2 rounded-xl bg-[#2d2d2d] border border-white/10 text-white focus:outline-none focus:border-orange-500 transition-all"
                   />
                 </div>
 
@@ -206,7 +206,7 @@ export default function App() {
                   <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Content</label>
                   {newClickType === 'image' ? (
                     <div className="relative group">
-                      <img src={newClickContent} className="w-full h-40 object-cover rounded-xl border border-gray-200" />
+                      <img src={newClickContent} className="w-full h-40 object-cover rounded-xl border border-white/10" />
                       <button 
                         onClick={() => {setNewClickContent(''); setNewClickType('text');}}
                         className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
@@ -224,7 +224,7 @@ export default function App() {
                         else setNewClickType('text');
                       }}
                       rows={4}
-                      className="w-full px-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:border-orange-500 transition-all resize-none"
+                      className="w-full px-4 py-2 rounded-xl bg-[#2d2d2d] border border-white/10 text-white focus:outline-none focus:border-orange-500 transition-all resize-none"
                     />
                   )}
                 </div>
@@ -232,7 +232,7 @@ export default function App() {
                 <div className="flex gap-2">
                   <button 
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors text-sm font-medium"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-white/10 bg-[#2d2d2d] hover:bg-[#333333] transition-colors text-sm font-medium text-gray-300"
                   >
                     <ImageIcon className="w-4 h-4 text-blue-500" />
                     Image
@@ -248,7 +248,7 @@ export default function App() {
                     onClick={() => setNewClickType('text')}
                     className={cn(
                       "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border transition-colors text-sm font-medium",
-                      newClickType === 'text' ? "bg-orange-50 border-orange-200 text-orange-600" : "border-gray-200 hover:bg-gray-50"
+                      newClickType === 'text' ? "bg-orange-500/10 border-orange-500/50 text-orange-500" : "border-white/10 bg-[#2d2d2d] hover:bg-[#333333] text-gray-300"
                     )}
                   >
                     <Type className="w-4 h-4" />
@@ -263,7 +263,7 @@ export default function App() {
                       <button 
                         key={char}
                         onClick={() => setNewClickContent(prev => prev + char)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 text-sm"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 bg-[#2d2d2d] hover:bg-[#333333] text-sm text-white"
                       >
                         {char}
                       </button>
@@ -294,24 +294,21 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={() => handleCopyClick(click)}
-              className="click-card group bg-white rounded-2xl p-4 border border-gray-100 cursor-pointer flex items-center gap-4"
+              className="click-card group bg-[#1e1e1e] rounded-2xl p-2 border border-white/10 cursor-pointer flex items-center gap-3"
             >
               <div className={cn(
-                "w-12 h-12 rounded-xl flex items-center justify-center shrink-0",
-                click.type === 'text' ? "bg-blue-50 text-blue-500" : 
-                click.type === 'image' ? "bg-purple-50 text-purple-500" : 
-                "bg-green-50 text-green-500"
+                "w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
+                click.type === 'text' ? "bg-blue-500/10 text-blue-500" : 
+                click.type === 'image' ? "bg-purple-500/10 text-purple-500" : 
+                "bg-green-500/10 text-green-500"
               )}>
-                {click.type === 'text' && <Type className="w-6 h-6" />}
-                {click.type === 'image' && <ImageIcon className="w-6 h-6" />}
-                {click.type === 'link' && <LinkIcon className="w-6 h-6" />}
+                {click.type === 'text' && <Type className="w-5 h-5" />}
+                {click.type === 'image' && <ImageIcon className="w-5 h-5" />}
+                {click.type === 'link' && <LinkIcon className="w-5 h-5" />}
               </div>
 
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 truncate">{click.title}</h3>
-                <p className="text-gray-500 text-sm truncate">
-                  {click.type === 'image' ? 'Image Click' : click.content}
-                </p>
+                <h3 className="font-semibold text-gray-100 truncate text-sm">{click.title}</h3>
               </div>
 
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -321,18 +318,18 @@ export default function App() {
                     target="_blank" 
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-orange-500 transition-colors"
+                    className="p-2 hover:bg-white/10 rounded-lg text-gray-500 hover:text-orange-500 transition-colors"
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 )}
                 <button 
                   onClick={(e) => handleDeleteClick(click.id, e)}
-                  className="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-colors"
+                  className="p-2 hover:bg-red-500/10 rounded-lg text-gray-500 hover:text-red-500 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
-                <div className="p-2 text-gray-300">
+                <div className="p-2 text-gray-600">
                   <Copy className="w-4 h-4" />
                 </div>
               </div>
@@ -342,10 +339,10 @@ export default function App() {
 
         {filteredClicks.length === 0 && (
           <div className="text-center py-20">
-            <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Clipboard className="w-8 h-8 text-gray-400" />
+            <div className="bg-[#1e1e1e] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
+              <Clipboard className="w-8 h-8 text-gray-600" />
             </div>
-            <h3 className="text-gray-900 font-medium">No clicks found</h3>
+            <h3 className="text-gray-100 font-medium">No clicks found</h3>
             <p className="text-gray-500 text-sm">Start by adding your first click!</p>
           </div>
         )}
