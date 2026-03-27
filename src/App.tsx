@@ -141,7 +141,7 @@ export default function App() {
         <header className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-              <img src="/icon.svg" alt="Copyclick Logo" className="w-8 h-8" />
+              <img src="/icons/icon48.png" alt="Copyclick Logo" className="w-8 h-8" />
               Copyclick
             </h1>
             <p className="text-gray-500 text-[10px] uppercase tracking-widest font-bold">by Sanu Singh</p>
