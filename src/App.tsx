@@ -207,16 +207,28 @@ export default function App() {
         }
         const blob = new Blob([ab], { type: mime });
         const file = new File([blob], click.title || "image.png", { type: mime });
+        
+        // Modern way
         e.dataTransfer.items.add(file);
-        // Fallback for some apps
+        
+        // Chromium specific: Drag to desktop/folders
+        const downloadUrl = `${mime}:${click.title || 'image.png'}:${click.content}`;
+        e.dataTransfer.setData('DownloadURL', downloadUrl);
+        
+        // Web compatibility
         e.dataTransfer.setData('text/html', `<img src="${click.content}" alt="${click.title}">`);
+        e.dataTransfer.setData('text/uri-list', click.content);
+        e.dataTransfer.setData('text/plain', click.content);
       } catch (err) {
         console.error('Drag start error:', err);
       }
     } else {
       e.dataTransfer.setData('text/plain', click.content);
+      if (click.type === 'link') {
+        e.dataTransfer.setData('text/uri-list', click.content);
+      }
     }
-    e.dataTransfer.effectAllowed = 'copyMove';
+    e.dataTransfer.effectAllowed = 'copy';
   };
 
   const filteredClicks = clicks.filter(click => {
